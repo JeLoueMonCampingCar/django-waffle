@@ -6,12 +6,15 @@ except ImportError:
 from django.contrib.auth.models import Group
 from django.db import models
 from django.db.models.signals import post_save, post_delete, m2m_changed
+from django.contrib.sites.models import Site
+
 
 from waffle.compat import AUTH_USER_MODEL, cache
 from waffle.utils import get_setting, keyfmt
 
 
 class Flag(models.Model):
+
     """A feature flag.
 
     Flags are active (or not) on a per-request basis.
@@ -24,8 +27,8 @@ class Flag(models.Model):
         'other settings. Leave as Unknown to use normally.'))
     percent = models.DecimalField(max_digits=3, decimal_places=1, null=True,
                                   blank=True, help_text=(
-        'A number between 0.0 and 99.9 to indicate a percentage of users for '
-        'whom this flag will be active.'))
+                                      'A number between 0.0 and 99.9 to indicate a percentage of users for '
+                                      'whom this flag will be active.'))
     testing = models.BooleanField(default=False, help_text=(
         'Allow this flag to be set for a session for user testing.'))
     superusers = models.BooleanField(default=True, help_text=(
@@ -46,9 +49,10 @@ class Flag(models.Model):
     note = models.TextField(blank=True, help_text=(
         'Note where this Flag is used.'))
     created = models.DateTimeField(default=datetime.now, db_index=True,
-        help_text=('Date when this Flag was created.'))
+                                   help_text=('Date when this Flag was created.'))
     modified = models.DateTimeField(default=datetime.now, help_text=(
         'Date when this Flag was last modified.'))
+    sites = models.ManyToManyField(Site, default=None, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -59,6 +63,7 @@ class Flag(models.Model):
 
 
 class Switch(models.Model):
+
     """A feature switch.
 
     Switches are active, or inactive, globally.
@@ -71,9 +76,10 @@ class Switch(models.Model):
     note = models.TextField(blank=True, help_text=(
         'Note where this Switch is used.'))
     created = models.DateTimeField(default=datetime.now, db_index=True,
-        help_text=('Date when this Switch was created.'))
+                                   help_text=('Date when this Switch was created.'))
     modified = models.DateTimeField(default=datetime.now, help_text=(
         'Date when this Switch was last modified.'))
+    sites = models.ManyToManyField(Site, default=None, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -87,6 +93,7 @@ class Switch(models.Model):
 
 
 class Sample(models.Model):
+
     """A sample is true some percentage of the time, but is not connected
     to users or requests.
     """
@@ -98,9 +105,10 @@ class Sample(models.Model):
     note = models.TextField(blank=True, help_text=(
         'Note where this Sample is used.'))
     created = models.DateTimeField(default=datetime.now, db_index=True,
-        help_text=('Date when this Sample was created.'))
+                                   help_text=('Date when this Sample was created.'))
     modified = models.DateTimeField(default=datetime.now, help_text=(
         'Date when this Sample was last modified.'))
+    sites = models.ManyToManyField(Site, default=None, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
