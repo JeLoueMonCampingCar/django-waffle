@@ -31,7 +31,7 @@ def test():
 
 def serve():
     """Start the Django dev server."""
-    _local('django-admin.py runserver')
+    _local('django-admin.py runserver 0.0.0.0:8000')
 
 
 def syncdb():
@@ -41,7 +41,7 @@ def syncdb():
 
 def schema():
     """Create a schema migration for any changes."""
-    _local('django-admin.py schemamigration waffle --auto')
+    _local('django-admin.py makemigrations waffle')
 
 
 def migrate():

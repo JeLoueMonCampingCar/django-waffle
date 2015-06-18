@@ -1,6 +1,6 @@
 from decimal import Decimal
 import random
-
+from django.contrib.sites.shortcuts import get_current_site
 from waffle.utils import get_setting, keyfmt
 
 
@@ -9,6 +9,7 @@ __version__ = '.'.join(map(str, VERSION))
 
 
 class DoesNotExist(object):
+
     """The record does not exist."""
     @property
     def active(self):
@@ -72,7 +73,7 @@ def flag_is_active(request, flag_name):
             return True
 
     flag_users = cache.get(keyfmt(get_setting('FLAG_USERS_CACHE_KEY'),
-                                              flag.name))
+                                  flag.name))
     if flag_users is None:
         flag_users = flag.users.all()
         cache_flag(instance=flag)
@@ -88,6 +89,16 @@ def flag_is_active(request, flag_name):
     for group in flag_groups:
         if group in user_groups:
             return True
+
+    # site management
+    flag_sites = cache.get(keyfmt(get_setting('FLAG_SITES_CACHE_KEY'),
+                                  flag.name))
+    if flag_sites is None:
+        flag_sites = flag.sites.all()
+        cache_flag(instance=flag)
+    site = get_current_site(request)
+    if site in flag_sites:
+        return True
 
     if flag.percent and flag.percent > 0:
         if not hasattr(request, 'waffles'):

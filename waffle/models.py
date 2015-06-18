@@ -52,7 +52,7 @@ class Flag(models.Model):
                                    help_text=('Date when this Flag was created.'))
     modified = models.DateTimeField(default=datetime.now, help_text=(
         'Date when this Flag was last modified.'))
-    sites = models.ManyToManyField(Site, default=None, null=True, blank=True)
+    sites = models.ManyToManyField(Site, default=None, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -79,7 +79,7 @@ class Switch(models.Model):
                                    help_text=('Date when this Switch was created.'))
     modified = models.DateTimeField(default=datetime.now, help_text=(
         'Date when this Switch was last modified.'))
-    sites = models.ManyToManyField(Site, default=None, null=True, blank=True)
+    sites = models.ManyToManyField(Site, default=None, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -108,7 +108,7 @@ class Sample(models.Model):
                                    help_text=('Date when this Sample was created.'))
     modified = models.DateTimeField(default=datetime.now, help_text=(
         'Date when this Sample was last modified.'))
-    sites = models.ManyToManyField(Site, default=None, null=True, blank=True)
+    sites = models.ManyToManyField(Site, default=None, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -128,6 +128,8 @@ def cache_flag(**kwargs):
                   f.users.all())
         cache.add(keyfmt(get_setting('FLAG_GROUPS_CACHE_KEY'), f.name),
                   f.groups.all())
+        cache.add(keyfmt(get_setting('FLAG_SITES_CACHE_KEY'), f.name),
+                  f.sites.all())
 
 
 def uncache_flag(**kwargs):
@@ -136,6 +138,7 @@ def uncache_flag(**kwargs):
         keyfmt(get_setting('FLAG_CACHE_KEY'), flag.name): None,
         keyfmt(get_setting('FLAG_USERS_CACHE_KEY'), flag.name): None,
         keyfmt(get_setting('FLAG_GROUPS_CACHE_KEY'), flag.name): None,
+        keyfmt(get_setting('FLAG_SITES_CACHE_KEY'), flag.name): None,
         keyfmt(get_setting('ALL_FLAGS_CACHE_KEY')): None
     }
     cache.set_many(data, 5)
