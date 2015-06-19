@@ -154,12 +154,18 @@ m2m_changed.connect(uncache_flag, sender=Flag.groups.through,
 def cache_sample(**kwargs):
     sample = kwargs.get('instance')
     cache.add(keyfmt(get_setting('SAMPLE_CACHE_KEY'), sample.name), sample)
+    cache.add(
+        keyfmt(get_setting('SAMPLE_SITES_CACHE_KEY'), sample.name),
+        sample.sites.all())
 
 
 def uncache_sample(**kwargs):
     sample = kwargs.get('instance')
     cache.set(keyfmt(get_setting('SAMPLE_CACHE_KEY'), sample.name), None, 5)
+    cache.set(
+        keyfmt(get_setting('SAMPLE_SITES_CACHE_KEY'), sample.name), None, 5)
     cache.set(keyfmt(get_setting('ALL_SAMPLES_CACHE_KEY')), None, 5)
+
 
 post_save.connect(uncache_sample, sender=Sample, dispatch_uid='save_sample')
 post_delete.connect(uncache_sample, sender=Sample,
@@ -169,11 +175,17 @@ post_delete.connect(uncache_sample, sender=Sample,
 def cache_switch(**kwargs):
     switch = kwargs.get('instance')
     cache.add(keyfmt(get_setting('SWITCH_CACHE_KEY'), switch.name), switch)
+    cache.add(
+        keyfmt(get_setting('SWITCHES_SITES_CACHE_KEY'), switch.name),
+        switch.sites.all())
 
 
 def uncache_switch(**kwargs):
     switch = kwargs.get('instance')
     cache.set(keyfmt(get_setting('SWITCH_CACHE_KEY'), switch.name), None, 5)
+    cache.set(
+        keyfmt(get_setting('SWITCHES_SITES_CACHE_KEY'), switch.name), None, 5)
+
     cache.set(keyfmt(get_setting('ALL_SWITCHES_CACHE_KEY')), None, 5)
 
 post_delete.connect(uncache_switch, sender=Switch,

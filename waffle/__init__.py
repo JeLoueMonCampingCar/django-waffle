@@ -1,10 +1,11 @@
 from decimal import Decimal
 import random
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.sites.models import Site
 from waffle.utils import get_setting, keyfmt
 
 
-VERSION = (0, 10, 1)
+VERSION = (0, 10, 1, 1)
 __version__ = '.'.join(map(str, VERSION))
 
 
@@ -125,14 +126,21 @@ def switch_is_active(switch_name):
     from .compat import cache
 
     switch = cache.get(keyfmt(get_setting('SWITCH_CACHE_KEY'), switch_name))
+    switch_sites = cache.get(keyfmt(get_setting('SWITCHES_SITES_CACHE_KEY'),
+                                    switch_name))
     if switch is None:
         try:
             switch = Switch.objects.get(name=switch_name)
+            switch_sites = switch.sites.all()
             cache_switch(instance=switch)
         except Switch.DoesNotExist:
             switch = DoesNotExist()
             switch.name = switch_name
             cache_switch(instance=switch)
+
+    if switch_sites:
+        site = Site.objects.get_current()
+        return switch.active and site in switch_sites
     return switch.active
 
 
@@ -141,11 +149,21 @@ def sample_is_active(sample_name):
     from .compat import cache
 
     sample = cache.get(keyfmt(get_setting('SAMPLE_CACHE_KEY'), sample_name))
+    sample_sites = cache.get(keyfmt(get_setting('SAMPLE_SITES_CACHE_KEY'),
+                                    sample_name))
     if sample is None:
         try:
             sample = Sample.objects.get(name=sample_name)
+            sample_sites = sample.sites.all()
             cache_sample(instance=sample)
         except Sample.DoesNotExist:
             return get_setting('SAMPLE_DEFAULT')
 
-    return Decimal(str(random.uniform(0, 100))) <= sample.percent
+    if sample_sites:
+        site = Site.objects.get_current()
+        if site in sample_sites:
+            return Decimal(str(random.uniform(0, 100))) <= sample.percent
+        else:
+            return False
+    else:
+        return Decimal(str(random.uniform(0, 100))) <= sample.percent

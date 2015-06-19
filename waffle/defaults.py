@@ -13,8 +13,10 @@ FLAG_GROUPS_CACHE_KEY = 'flag:%s:groups'
 FLAG_SITES_CACHE_KEY = 'flag:%s:sites'
 ALL_FLAGS_CACHE_KEY = 'flags:all'
 SAMPLE_CACHE_KEY = 'sample:%s'
+SAMPLE_SITES_CACHE_KEY = 'samples:%s:sites'
 ALL_SAMPLES_CACHE_KEY = 'samples:all'
 SWITCH_CACHE_KEY = 'switch:%s'
+SWITCHES_SITES_CACHE_KEY = 'switches:%s:sites'
 ALL_SWITCHES_CACHE_KEY = 'switches:all'
 
 FLAG_DEFAULT = False
