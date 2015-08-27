@@ -136,6 +136,7 @@ def switch_is_active(switch_name):
         except Switch.DoesNotExist:
             switch = DoesNotExist()
             switch.name = switch_name
+            switch.sites = Site.objects.none()
             cache_switch(instance=switch)
 
     if switch_sites:
