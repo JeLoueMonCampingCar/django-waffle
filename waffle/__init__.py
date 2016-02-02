@@ -1,7 +1,6 @@
 from decimal import Decimal
 import random
 from django.contrib.sites.shortcuts import get_current_site
-from django.contrib.sites.models import Site
 from waffle.utils import get_setting, keyfmt
 
 
@@ -134,12 +133,14 @@ def switch_is_active(switch_name):
             switch_sites = switch.sites.all()
             cache_switch(instance=switch)
         except Switch.DoesNotExist:
+            from django.contrib.sites.models import Site
             switch = DoesNotExist()
             switch.name = switch_name
             switch.sites = Site.objects.none()
             cache_switch(instance=switch)
 
     if switch_sites:
+        from django.contrib.sites.models import Site
         site = Site.objects.get_current()
         return switch.active and site in switch_sites
     return switch.active
@@ -161,6 +162,7 @@ def sample_is_active(sample_name):
             return get_setting('SAMPLE_DEFAULT')
 
     if sample_sites:
+        from django.contrib.sites.models import Site
         site = Site.objects.get_current()
         if site in sample_sites:
             return Decimal(str(random.uniform(0, 100))) <= sample.percent
