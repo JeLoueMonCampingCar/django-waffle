@@ -1,10 +1,13 @@
+from __future__ import unicode_literals
+
 from decimal import Decimal
 import random
 from django.contrib.sites.shortcuts import get_current_site
 from waffle.utils import get_setting, keyfmt
 
 
-VERSION = (0, 10, 1, 1)
+VERSION = (0, 11, 1)
+
 __version__ = '.'.join(map(str, VERSION))
 
 

@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 try:
     from django.utils import timezone as datetime
 except ImportError:
@@ -7,12 +9,13 @@ from django.contrib.auth.models import Group
 from django.db import models
 from django.db.models.signals import post_save, post_delete, m2m_changed
 from django.contrib.sites.models import Site
-
+from django.utils.encoding import python_2_unicode_compatible
 
 from waffle.compat import AUTH_USER_MODEL, cache
 from waffle.utils import get_setting, keyfmt
 
 
+@python_2_unicode_compatible
 class Flag(models.Model):
 
     """A feature flag.
@@ -54,7 +57,7 @@ class Flag(models.Model):
         'Date when this Flag was last modified.'))
     sites = models.ManyToManyField(Site, default=None, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
@@ -62,6 +65,7 @@ class Flag(models.Model):
         super(Flag, self).save(*args, **kwargs)
 
 
+@python_2_unicode_compatible
 class Switch(models.Model):
 
     """A feature switch.
@@ -81,7 +85,7 @@ class Switch(models.Model):
         'Date when this Switch was last modified.'))
     sites = models.ManyToManyField(Site, default=None, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
@@ -92,6 +96,7 @@ class Switch(models.Model):
         verbose_name_plural = 'Switches'
 
 
+@python_2_unicode_compatible
 class Sample(models.Model):
 
     """A sample is true some percentage of the time, but is not connected
@@ -110,7 +115,7 @@ class Sample(models.Model):
         'Date when this Sample was last modified.'))
     sites = models.ManyToManyField(Site, default=None, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
